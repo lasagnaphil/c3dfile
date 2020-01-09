@@ -1,38 +1,17 @@
-CMAKE_MINIMUM_REQUIRED ( VERSION 2.6 )
+cmake_minimum_required(VERSION 3.0)
 
-PROJECT( "c3dfile" CXX )
+project(c3dfile)
 
-LIST ( APPEND CMAKE_MODULE_PATH
-	${PROJECT_SOURCE_DIR}/CMake
-	)	
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-# This line adds the directory PATH_TO/LIBRARY/include to our compiler include path.
-INCLUDE_DIRECTORIES ("include/" "src/")
+add_library(c3dfile STATIC src/c3dfile.cc src/c3dutils.cc)
+target_include_directories(c3dfile PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-ADD_LIBRARY ( c3dfile STATIC
-	src/c3dfile.cc
-	src/c3dutils.cc
-	)
-	
-SUBDIRS (
-	tests
-	)
+# Disable tests (for now)
+# subdirs(tests)
 
-ADD_EXECUTABLE ( c3dexport
-	src/c3dexport.cc
-)
-ADD_EXECUTABLE ( debug
-	tests/debug.cc
-)
+add_executable(c3dexport src/c3dexport.cc)
+target_link_libraries(c3dexport c3dfile)
 
-SET_TARGET_PROPERTIES ( c3dfile PROPERTIES
-	LINKER_LANGUAGE CXX
-)
-
-TARGET_LINK_LIBRARIES ( c3dexport
-	c3dfile
-	)
-TARGET_LINK_LIBRARIES ( debug
-	c3dfile
-	)
-
+add_executable(c3ddebug tests/debug.cc)
+target_link_libraries(c3ddebug c3dfile)
